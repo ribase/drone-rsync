@@ -29,6 +29,7 @@ deploy:
       - "or/this/one"
     commands:
       - service nginx restart
+    sshparams: /path/to/your/keyfile
 ```
 
 ## Keys

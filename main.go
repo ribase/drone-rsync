@@ -29,6 +29,7 @@ type Rsync struct {
 	Exclude   drone.StringSlice `json:"exclude"`
 	Filter    drone.StringSlice `json:"filter"`
 	Commands  []string          `json:"commands"`
+	SSHParams string	    `json:"sshparams"`
 }
 
 var (
@@ -113,7 +114,13 @@ func (rs *Rsync) buildRsync(host, root string) *exec.Cmd {
 
 	// append custom ssh parameters
 	args = append(args, "-e")
-	args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no", rs.Port))
+	if len(rs.SSHParams) > 0 {
+		args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no -i "+ rs.SSHParams, rs.Port))
+	}else {
+		args = append(args, fmt.Sprintf("ssh -p %d -o UserKnownHostsFile=/dev/null -o LogLevel=quiet -o StrictHostKeyChecking=no", rs.Port))
+	}
+
+
 
 	// append filtering rules
 	for _, pattern := range rs.Include.Slice() {
